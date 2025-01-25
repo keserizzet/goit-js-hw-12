@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.14.3/simple-lightbox.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
+    <link rel="stylesheet" href="./css/styles.css">
+    <title>goit-js-hw-11</title>
+  </head>
+  <body>
+    <header class="header">
+      <form id="search-form" class="search-form">
+        <input
+          type="text"
+          id="search-input"
+          class="search-input"
+          placeholder="Search images..."
+          required
+        />
+        <button type="submit" class="search-button">Search</button>
+      </form>
+    </header>
+    <main class="main-content">
+      <div id="loader" class="loader hidden"></div>
+      <div id="gallery" class="gallery"></div>
+    </main>
+    <div id="app"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.14.3/simple-lightbox.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
