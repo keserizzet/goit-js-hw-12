@@ -25,11 +25,16 @@
     <main class="main-content">
       <div id="loader" class="loader hidden"></div>
       <div id="gallery" class="gallery"></div>
+      <div class="controls">
+        <button id="load-more" class="load-more hidden">Load more</button>
+        <p id="end-message" class="hidden">We're sorry, but you've reached the end of search results.</p>
+      </div>
+    </div>
     </main>
     <div id="app"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.14.3/simple-lightbox.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.11.0/simple-lightbox.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
-    <script type="module" src="./main.js"></script>
+    <script src="./main.js"></script>
   </body>
 </html>
