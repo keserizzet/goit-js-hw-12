@@ -27,6 +27,13 @@ const fetchImages = async (query, page = 1) => {
       },
     });
 
+    if (response.data.hits.length === 0) {
+      iziToast.warning({
+        title: "No Results",
+        message: "No images found for your search query. Please try again!",
+      });
+    }
+
     return response.data;
   } catch (error) {
     iziToast.error({
@@ -71,16 +78,20 @@ const renderGallery = (images) => {
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  currentQuery = searchInput.value.trim();
-  if (!currentQuery) {
+  const newQuery = searchInput.value.trim();
+  if (!newQuery) {
     iziToast.error({ title: "Error", message: "Please enter a search term!" });
     return;
   }
 
-  currentPage = 1;
-  gallery.innerHTML = "";
-  loadMoreButton.classList.add("hidden");
-  endMessage.classList.add("hidden");
+  if (currentQuery !== newQuery) {
+    currentPage = 1;
+    currentQuery = newQuery;
+    gallery.innerHTML = "";
+    loadMoreButton.classList.add("hidden");
+    endMessage.classList.add("hidden");
+  }
+
   loader.classList.remove("hidden");
 
   const { hits, totalHits: hitsCount } = await fetchImages(currentQuery, currentPage);
@@ -88,17 +99,11 @@ form.addEventListener("submit", async (e) => {
 
   totalHits = hitsCount;
 
-  if (hits.length === 0) {
-    iziToast.warning({
-      title: "No Results",
-      message: "No images found. Please try a different query.",
-    });
-    return;
-  }
+  if (hits.length === 0) return;
 
   renderGallery(hits);
 
-  if (hits.length < totalHits) {
+  if (currentPage * 20 < totalHits) {
     loadMoreButton.classList.remove("hidden");
   }
 });
@@ -115,7 +120,7 @@ loadMoreButton.addEventListener("click", async () => {
   const galleryHeight = document.querySelector(".gallery-item").getBoundingClientRect().height;
   window.scrollBy({ top: galleryHeight * 2, behavior: "smooth" });
 
-  if (currentPage * 40 >= totalHits) {
+  if (currentPage * 20 >= totalHits) {
     loadMoreButton.classList.add("hidden");
     endMessage.classList.remove("hidden");
   }
