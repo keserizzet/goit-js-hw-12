@@ -15,6 +15,7 @@ let lightbox = null;
 
 const fetchImages = async (query, page = 1) => {
   try {
+    loader.classList.remove("hidden");
     const response = await axios.get(BASE_URL, {
       params: {
         key: API_KEY,
@@ -22,16 +23,17 @@ const fetchImages = async (query, page = 1) => {
         image_type: "photo",
         orientation: "horizontal",
         safesearch: true,
-        per_page: 20,
+        per_page: 40,
         page: page,
       },
     });
 
-    if (response.data.hits.length === 0) {
+    if (!response.data.hits || response.data.hits.length === 0) {
       iziToast.warning({
         title: "No Results",
         message: "No images found for your search query. Please try again!",
       });
+      return { hits: [], totalHits: 0 };
     }
 
     return response.data;
@@ -42,6 +44,8 @@ const fetchImages = async (query, page = 1) => {
     });
     console.error("API Error:", error);
     return { hits: [], totalHits: 0 };
+  } finally {
+    loader.classList.add("hidden");
   }
 };
 
@@ -92,10 +96,7 @@ form.addEventListener("submit", async (e) => {
     endMessage.classList.add("hidden");
   }
 
-  loader.classList.remove("hidden");
-
   const { hits, totalHits: hitsCount } = await fetchImages(currentQuery, currentPage);
-  loader.classList.add("hidden");
 
   totalHits = hitsCount;
 
@@ -103,25 +104,36 @@ form.addEventListener("submit", async (e) => {
 
   renderGallery(hits);
 
-  if (currentPage * 20 < totalHits) {
+  if (currentPage * 40 < totalHits) {
     loadMoreButton.classList.remove("hidden");
   }
 });
 
 loadMoreButton.addEventListener("click", async () => {
   currentPage += 1;
-  loader.classList.remove("hidden");
 
-  const { hits } = await fetchImages(currentQuery, currentPage);
-  loader.classList.add("hidden");
+  try {
+    const { hits } = await fetchImages(currentQuery, currentPage);
 
-  renderGallery(hits);
+    renderGallery(hits);
 
-  const galleryHeight = document.querySelector(".gallery-item").getBoundingClientRect().height;
-  window.scrollBy({ top: galleryHeight * 2, behavior: "smooth" });
+    const galleryHeight = document.querySelector(".gallery-item").getBoundingClientRect().height;
+    window.scrollBy({ top: galleryHeight * 2, behavior: "smooth" });
 
-  if (currentPage * 20 >= totalHits) {
-    loadMoreButton.classList.add("hidden");
-    endMessage.classList.remove("hidden");
+    if (currentPage * 40 >= totalHits) {
+      iziToast.info({
+        title: "We're sorry",
+        message: "You've reached the end of search results.",
+        position: "topRight",
+        timeout: 3000,
+      });
+      loadMoreButton.classList.add("hidden");
+      endMessage.classList.remove("hidden");
+    }
+  } catch (error) {
+    iziToast.error({
+      title: "Error",
+      message: "We're sorry, but you've reached the end of search results",
+    });
   }
 });
